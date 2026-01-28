@@ -1,4 +1,4 @@
-# MetaRising Dashboard
+# MetaRising (MRG) Dashboard
 
 ## Project Info
 
