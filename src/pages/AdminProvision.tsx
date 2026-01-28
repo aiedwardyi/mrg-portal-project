@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2, Users, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 // Admin emails that can access this page
-const ADMIN_EMAILS = ["aiedwardyi@gmail.com"]; // TODO: Update with actual admin email(s)
+const ADMIN_EMAILS = ["edwardyi@utexas.edu"]; // TODO: Update with actual admin email(s)
 
 interface ProvisionResult {
   email: string;
