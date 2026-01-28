@@ -46,10 +46,13 @@ Deno.serve(async (req) => {
     const userExists = existingUsers?.users.some((u) => u.email === email);
 
     if (userExists) {
-      // User exists, send password reset email
-      const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+      // User exists, generate password reset link with correct redirect
+      const { data: linkData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
         type: "recovery",
         email: email,
+        options: {
+          redirectTo: "https://id-preview--31b58d3d-0aa6-420d-a936-d987668b1e3a.lovable.app/reset-password",
+        },
       });
 
       if (resetError) {
@@ -62,7 +65,8 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           message: "User already exists. Password reset link generated.",
-          status: "exists"
+          status: "exists",
+          resetLink: linkData.properties?.action_link
         }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -92,6 +96,9 @@ Deno.serve(async (req) => {
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "recovery",
       email: email,
+      options: {
+        redirectTo: "https://id-preview--31b58d3d-0aa6-420d-a936-d987668b1e3a.lovable.app/reset-password",
+      },
     });
 
     if (linkError) {
