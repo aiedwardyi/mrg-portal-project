@@ -52,7 +52,7 @@ export default function Dashboard() {
               Welcome back
             </h1>
             <p className="text-muted-foreground">
-              Here's your current MRG investment status
+              Here's your current MRG membership status
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export default function Dashboard() {
       {/* Footer */}
       <footer className="py-6 text-center">
         <p className="text-xs text-muted-foreground">
-          © 2024 MRG. All rights reserved.
+          © 2026 MetaRising. All rights reserved.
         </p>
       </footer>
     </div>

@@ -39,7 +39,7 @@ export default function Login() {
           </div>
           
           <p className="text-center text-xs text-muted-foreground mt-6">
-            This portal is for existing MRG investors only.
+            This portal is for existing MetaRising members only.
           </p>
         </div>
       </main>
@@ -47,7 +47,7 @@ export default function Login() {
       {/* Footer */}
       <footer className="p-6 text-center">
         <p className="text-xs text-muted-foreground">
-          © 2024 MRG. All rights reserved.
+          © 2026 MetaRising. All rights reserved.
         </p>
       </footer>
     </div>
