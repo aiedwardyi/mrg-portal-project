@@ -21,7 +21,7 @@ export default function ResetPassword() {
       {/* Footer */}
       <footer className="p-6 text-center">
         <p className="text-xs text-muted-foreground">
-          © 2024 MRG. All rights reserved.
+          © 2026 MetaRising. All rights reserved.
         </p>
       </footer>
     </div>

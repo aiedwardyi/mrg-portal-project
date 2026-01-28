@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import metarisingLogo from "@/assets/metarising-logo.png";
 
 interface LogoProps {
   className?: string;
@@ -7,21 +8,18 @@ interface LogoProps {
 
 export function Logo({ className, size = "md" }: LogoProps) {
   const sizeClasses = {
-    sm: "text-xl",
-    md: "text-2xl",
-    lg: "text-3xl",
+    sm: "h-6",
+    md: "h-8",
+    lg: "h-10",
   };
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <div className="relative">
-        <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center shadow-glow">
-          <span className="text-primary-foreground font-bold text-sm font-display">M</span>
-        </div>
-      </div>
-      <span className={cn("font-display font-bold text-foreground", sizeClasses[size])}>
-        MRG <span className="text-primary">Dashboard</span>
-      </span>
+    <div className={cn("flex items-center", className)}>
+      <img 
+        src={metarisingLogo} 
+        alt="MetaRising" 
+        className={cn("w-auto", sizeClasses[size])}
+      />
     </div>
   );
 }
