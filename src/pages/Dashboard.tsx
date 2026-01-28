@@ -3,6 +3,7 @@ import { useMemberData } from "@/hooks/useMemberData";
 import { Header } from "@/components/dashboard/Header";
 import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { MemberInfo } from "@/components/dashboard/MemberInfo";
+import { Footer } from "@/components/ui/Footer";
 import { Loader2, AlertCircle } from "lucide-react";
 
 export default function Dashboard() {
@@ -67,12 +68,7 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 text-center">
-        <p className="text-xs text-muted-foreground">
-          © 2026 MetaRising. All rights reserved.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { Logo } from "@/components/ui/Logo";
+import { Footer } from "@/components/ui/Footer";
 
 export default function ForgotPassword() {
   return (
@@ -18,12 +19,7 @@ export default function ForgotPassword() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="p-6 text-center">
-        <p className="text-xs text-muted-foreground">
-          © 2026 MetaRising. All rights reserved.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }
