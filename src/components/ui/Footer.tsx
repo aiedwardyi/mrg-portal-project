@@ -1,4 +1,4 @@
-import { Cookie, Cherry } from "lucide-react";
+import { Apple, Cherry } from "lucide-react";
 
 export function Footer() {
   return (
@@ -10,7 +10,7 @@ export function Footer() {
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
         >
-          <Cookie className="h-4 w-4" />
+          <Apple className="h-4 w-4" />
           <span>Microtuber</span>
         </a>
         <a 
