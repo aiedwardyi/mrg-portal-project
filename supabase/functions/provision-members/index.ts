@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Admin emails allowed to use this function
-const ADMIN_EMAILS = ["aiedwardyi@gmail.com"]; // TODO: Update with actual admin email(s)
+const ADMIN_EMAILS = ["edwardyi@utexas.edu"]; // TODO: Update with actual admin email(s)
 
 // Generate a cryptographically secure random password
 function generateSecurePassword(length = 24): string {
