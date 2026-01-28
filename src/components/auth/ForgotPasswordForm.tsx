@@ -18,29 +18,34 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
+      const trimmedEmail = email.trim().toLowerCase();
+      
+      // Check if email exists in members table first
+      const { data: member } = await supabase
+        .from("members")
+        .select("id")
+        .eq("email", trimmedEmail)
+        .maybeSingle();
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
+      // Only send reset email if member exists
+      if (member) {
+        await supabase.auth.resetPasswordForEmail(trimmedEmail, {
+          redirectTo: `${window.location.origin}/reset-password`,
         });
-        return;
       }
 
+      // Always show success message to prevent email enumeration
       setIsSuccess(true);
       toast({
         title: "Reset Link Sent",
-        description: "Check your email for the password reset link.",
+        description: "If this email is registered, you will receive a password reset link.",
       });
     } catch (error) {
+      // Still show success to prevent enumeration
+      setIsSuccess(true);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
+        title: "Reset Link Sent",
+        description: "If this email is registered, you will receive a password reset link.",
       });
     } finally {
       setIsLoading(false);
