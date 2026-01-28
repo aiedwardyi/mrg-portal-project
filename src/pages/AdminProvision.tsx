@@ -6,19 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Logo } from "@/components/ui/Logo";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2, Users, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 // Admin emails that can access this page
-const ADMIN_EMAILS = ["admin@example.com"]; // TODO: Update with actual admin email(s)
+const ADMIN_EMAILS = ["aiedwardyi@gmail.com"]; // TODO: Update with actual admin email(s)
 
 interface ProvisionResult {
   email: string;
@@ -65,16 +58,13 @@ export default function AdminProvision() {
         return;
       }
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/provision-members`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/provision-members`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
 
@@ -141,18 +131,14 @@ export default function AdminProvision() {
               Provision Users
             </CardTitle>
             <CardDescription>
-              Create auth accounts for all members in the database. Users will use "Forgot Password" 
-              to set their own password when they're ready to log in.
+              Create auth accounts for all members in the database. Users will use "Forgot Password" to set their own
+              password when they're ready to log in.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Action Button */}
             <div className="flex flex-col sm:flex-row gap-4 items-start">
-              <Button
-                onClick={handleProvision}
-                disabled={isProvisioning}
-                className="min-w-[200px]"
-              >
+              <Button onClick={handleProvision} disabled={isProvisioning} className="min-w-[200px]">
                 {isProvisioning ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -199,9 +185,7 @@ export default function AdminProvision() {
                   <TableBody>
                     {results.map((result, index) => (
                       <TableRow key={index}>
-                        <TableCell className="font-mono text-sm">
-                          {result.email}
-                        </TableCell>
+                        <TableCell className="font-mono text-sm">{result.email}</TableCell>
                         <TableCell>
                           {result.status === "created" && (
                             <Badge variant="default">
