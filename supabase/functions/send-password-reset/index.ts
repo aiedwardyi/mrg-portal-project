@@ -48,29 +48,21 @@ const handler = async (req: Request): Promise<Response> => {
       const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
         type: "recovery",
         email: trimmedEmail,
-        options: {
-          // Point directly to custom domain to bypass Lovable's auth-bridge
-          redirectTo: "https://mrgwallet.com/reset-password",
-        },
       });
 
       if (linkError) {
         console.error("Error generating reset link:", linkError);
         // Still return success to prevent enumeration
       } else if (linkData?.properties?.action_link) {
-        // The action_link from generateLink goes to Supabase's verify endpoint
-        // We need to modify it to redirect to our custom domain after verification
-        // Extract the token from the action link and build a direct link
+        // Extract the token_hash from the generated link
+        // The action_link format: https://xxx.supabase.co/auth/v1/verify?token=xxx&type=recovery&redirect_to=xxx
         const actionLink = linkData.properties.action_link;
-        
-        // Parse the action link to get the token parameters
         const url = new URL(actionLink);
         const token = url.searchParams.get("token");
-        const type = url.searchParams.get("type");
         
-        // Build a link that goes directly to Supabase's verify endpoint with our custom redirect
-        // This ensures the user ends up on mrgwallet.com after verification
-        const resetUrl = `${supabaseUrl}/auth/v1/verify?token=${token}&type=${type}&redirect_to=https://mrgwallet.com/reset-password`;
+        // Build a direct link to our custom domain with the token
+        // The frontend will use verifyOtp to validate the token
+        const resetUrl = `https://mrgwallet.com/reset-password?token=${token}&email=${encodeURIComponent(trimmedEmail)}`;
         
         // Send the email via Resend
         const emailResponse = await resend.emails.send({
