@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,25 +11,67 @@ export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isValidToken, setIsValidToken] = useState(false);
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if we have a valid session from the reset link
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Invalid or Expired Link",
-          description: "Please request a new password reset link.",
-          variant: "destructive",
-        });
-        navigate("/forgot-password");
+    const verifyToken = async () => {
+      // Get token and email from URL query params
+      const token = searchParams.get("token");
+      const email = searchParams.get("email");
+
+      // Also check for hash fragment (Supabase's default format)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get("access_token");
+
+      if (accessToken) {
+        // Handle Supabase's default hash format (for preview compatibility)
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setIsValidToken(true);
+          setIsVerifying(false);
+          return;
+        }
       }
+
+      if (token && email) {
+        // Verify the OTP token from the custom email link
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: "recovery",
+        });
+
+        if (error) {
+          console.error("Token verification error:", error);
+          toast({
+            title: "Invalid or Expired Link",
+            description: "Please request a new password reset link.",
+            variant: "destructive",
+          });
+          navigate("/forgot-password");
+          return;
+        }
+
+        setIsValidToken(true);
+        setIsVerifying(false);
+        return;
+      }
+
+      // No valid token found
+      toast({
+        title: "Invalid Link",
+        description: "Please request a new password reset link.",
+        variant: "destructive",
+      });
+      navigate("/forgot-password");
     };
-    checkSession();
-  }, [navigate, toast]);
+
+    verifyToken();
+  }, [navigate, toast, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +129,16 @@ export function ResetPasswordForm() {
     }
   };
 
+  // Show loading while verifying token
+  if (isVerifying) {
+    return (
+      <div className="text-center space-y-6 animate-fade-in">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+        <p className="text-muted-foreground">Verifying your reset link...</p>
+      </div>
+    );
+  }
+
   if (isSuccess) {
     return (
       <div className="text-center space-y-6 animate-fade-in">
@@ -103,6 +155,10 @@ export function ResetPasswordForm() {
         </div>
       </div>
     );
+  }
+
+  if (!isValidToken) {
+    return null;
   }
 
   return (
