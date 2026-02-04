@@ -49,6 +49,7 @@ const handler = async (req: Request): Promise<Response> => {
         type: "recovery",
         email: trimmedEmail,
         options: {
+          // Point directly to custom domain to bypass Lovable's auth-bridge
           redirectTo: "https://mrgwallet.com/reset-password",
         },
       });
@@ -57,6 +58,20 @@ const handler = async (req: Request): Promise<Response> => {
         console.error("Error generating reset link:", linkError);
         // Still return success to prevent enumeration
       } else if (linkData?.properties?.action_link) {
+        // The action_link from generateLink goes to Supabase's verify endpoint
+        // We need to modify it to redirect to our custom domain after verification
+        // Extract the token from the action link and build a direct link
+        const actionLink = linkData.properties.action_link;
+        
+        // Parse the action link to get the token parameters
+        const url = new URL(actionLink);
+        const token = url.searchParams.get("token");
+        const type = url.searchParams.get("type");
+        
+        // Build a link that goes directly to Supabase's verify endpoint with our custom redirect
+        // This ensures the user ends up on mrgwallet.com after verification
+        const resetUrl = `${supabaseUrl}/auth/v1/verify?token=${token}&type=${type}&redirect_to=https://mrgwallet.com/reset-password`;
+        
         // Send the email via Resend
         const emailResponse = await resend.emails.send({
           from: "MRG Wallet <noreply@mrgwallet.com>",
@@ -77,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
                   You requested to reset your password. Click the button below to set a new password:
                 </p>
                 <div style="text-align: center; margin: 32px 0;">
-                  <a href="${linkData.properties.action_link}" style="display: inline-block; background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">Reset Password</a>
+                  <a href="${resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">Reset Password</a>
                 </div>
                 <p style="color: #71717a; font-size: 14px; line-height: 1.6; margin: 24px 0 0 0;">
                   If you didn't request this, you can safely ignore this email. This link will expire in 1 hour.
