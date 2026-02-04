@@ -20,18 +20,21 @@ export function ForgotPasswordForm() {
     try {
       const trimmedEmail = email.trim().toLowerCase();
       
-      // Check if email exists in members table first
-      const { data: member } = await supabase
-        .from("members")
-        .select("id")
-        .eq("email", trimmedEmail)
-        .maybeSingle();
+      // Call edge function to send password reset via Resend
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-password-reset`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ email: trimmedEmail }),
+        }
+      );
 
-      // Only send reset email if member exists
-      if (member) {
-        await supabase.auth.resetPasswordForEmail(trimmedEmail, {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
+      if (!response.ok) {
+        throw new Error("Failed to send reset email");
       }
 
       // Always show success message to prevent email enumeration
